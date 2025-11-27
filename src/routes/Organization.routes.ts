@@ -8,5 +8,6 @@ router.get("/", OrganizationController.getAll);
 router.get("/:id", OrganizationController.getOne);
 router.put("/:id", uploadOrganizationFiles, OrganizationController.update);
 router.delete("/:id", OrganizationController.remove);
+router.post("/login", OrganizationController.Login);
 
 export default router;

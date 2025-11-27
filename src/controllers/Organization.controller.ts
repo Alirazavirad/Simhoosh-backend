@@ -1,17 +1,20 @@
 import { Request, Response } from "express";
 import { OrganizationService } from "../services/Organization.service";
+import { OrganizationModel } from "../models/Organization.model";
+import crypto from "crypto";
 export const OrganizationController = {
   async create(req: Request, res: Response) {
     try {
       const files = req.files as any;
 
+      const token = await crypto.randomBytes(32).toString("hex");
       const files_uploaded = {
         national_card_img: files?.national_card_img?.[0]?.path,
         personnel_card_img: files?.personnel_card_img?.[0]?.path,
         introduction_img: files?.introduction_img?.[0]?.path,
       };
 
-      const data = { ...req.body, ...files_uploaded };
+      const data = { ...req.body, ...files_uploaded,token };
 
       await OrganizationService.create(data);
 
@@ -71,6 +74,26 @@ export const OrganizationController = {
       res.json({ success: true });
     } catch (error) {
       console.error("Remove error:", error);
+      res.status(500).json({ error });
+    }
+  },
+  async Login(req: Request, res: Response) {
+    try {
+      const { national_id, phone } = req.body;
+      const token = await crypto.randomBytes(32).toString("hex");
+      const data = await OrganizationModel.findOne({
+        national_id,
+        phone: phone,
+      });
+      if (data) {
+        res.status(200).json({ message: "ورود موفقیت امیز", token });
+      } else {
+        res.status(404).json({
+          message: "شماره پروانه یا شماره تلفن گلخانه اشتباه است",
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       res.status(500).json({ error });
     }
   },

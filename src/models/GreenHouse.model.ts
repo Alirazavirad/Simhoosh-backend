@@ -21,12 +21,16 @@ export interface IGreenHouse extends Document {
   google_map_link: string;
   license_number_image: string;
   logo: string;
+  lat : string;
+  lng : string;
+  token: string;
 }
 
 const GreenHouseSchema: Schema = new Schema(
   {
     name: { type: String, required: true},
 
+    token: { type: String, required: true},
     license_number: { type: String, required: true},
 
     kind: { type: String, required: true },
@@ -36,8 +40,10 @@ const GreenHouseSchema: Schema = new Schema(
     meterage: { type: Number, required: true },
 
     status: { type: String, required: true },
+    lat : { type : String, required : true },
+    lng : { type : String, required : true },
 
-    build_time: { type: Storage, required: true },
+    build_time: { type: String, required: true },
 
     finish_time: { type: String, required: true },
 

@@ -6,7 +6,7 @@ export interface ICompany extends Document {
   national_id: string;
   reg_number: string;
   reg_place: number;
-  reg_date: Date;
+  reg_date: String;
   owner_name: string;
   owner_national_id: string;
   owner_phone: string;
@@ -20,28 +20,32 @@ export interface ICompany extends Document {
   postal_code: number;
   trademark: string;
   google_map_link: string;
-
+lat : string;
+  lng : string;
   logo: string;                     
   license_number_image: string;    
   trademark_logo: string;           
   trademark_license_image: string;  
-  newspape_image: string;           
-
+  newspaper_image: string;           
   company_tel: string;
   company_phone?: string;
   company_site: string;
   company_email: string;
+  token : string;
 }
 
 const CompanySchema: Schema = new Schema(
   {
     name: { type: String, required: true },
+    token : { type: String, required: true },
     company_kind: { type: String, required: true },
     national_id: { type: String, required: true },
     reg_number: { type: String, required: true },
-    reg_place: { type: Number, required: true },
-    reg_date: { type: Date, required: true },
+    reg_place: { type: String, required: true },
+    reg_date: { type: String, required: true },
 
+    lat : { type : String, required : true },
+    lng : { type : String, required : true },
     owner_name: { type: String, required: true },
     owner_national_id: { type: String, required: true },
     owner_phone: { type: String, required: true },
@@ -63,7 +67,7 @@ const CompanySchema: Schema = new Schema(
     license_number_image: { type: String, required: true },
     trademark_logo: { type: String, required: true },
     trademark_license_image: { type: String, required: true },
-    newspape_image: { type: String, required: true },
+    newspaper_image: { type: String, required: true },
 
     company_tel: { type: String, required: true },
     company_phone: { type: String },

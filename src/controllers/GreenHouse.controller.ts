@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { GreenHouseService } from "../services/GreenHouse.service";
-
+import { GreenHouseModel } from "../models/GreenHouse.model";
+import crypto from "crypto";
 export const GreenHouseController = {
   async create(req: Request, res: Response) {
     try {
@@ -10,11 +11,46 @@ export const GreenHouseController = {
           ?.path,
       };
 
-      const data = { ...req.body, ...files_uploaded };
+      const token = await crypto.randomBytes(32).toString("hex");
 
+      const { google_map_link, address } = req.body;
 
-        const result = await GreenHouseService.create(data);
-        res.status(201).json({message : "گلخانه ایجاد شد"})
+      const match = google_map_link?.match(/@([-0-9.]+),([-0-9.]+)/);
+
+      let lat = "";
+      let lng = "";
+
+      if (match) {
+        lat = match[1];
+        lng = match[2];
+      } else {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            address
+          )}`
+        );
+
+        const data: any = await response.json();
+
+        if (data.length > 0) {
+          const best = data.sort(
+            (a: any, b: any) => b.importance - a.importance
+          )[0];
+
+          lat = best.lat;
+          lng = best.lon;
+        }
+      }
+
+      if (!lat || !lng) {
+        return res.status(404).json({ message: "نشانی نامعتبر" });
+      }
+
+      const dataToSave = { ...req.body, ...files_uploaded, token, lat, lng };
+
+      await GreenHouseService.create(dataToSave);
+
+      res.status(201).json({ message: "گلخانه ایجاد شد" });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });
@@ -62,6 +98,26 @@ export const GreenHouseController = {
     try {
       await GreenHouseService.remove(req.params.id);
       res.json({ success: true });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error });
+    }
+  },
+  async Login(req: Request, res: Response) {
+    try {
+      const { license_number, phone } = req.body;
+      const token = await crypto.randomBytes(32).toString("hex");
+      const data = await GreenHouseModel.findOne({
+        license_number,
+        owner_phone: phone,
+      });
+      if (data) {
+        res.status(200).json({ message: "ورود موفقیت امیز", token });
+      } else {
+        res
+          .status(404)
+          .json({ message: "شماره پروانه یا شماره تلفن گلخانه اشتباه است" });
+      }
     } catch (error) {
       console.error(error);
       res.status(500).json({ error });

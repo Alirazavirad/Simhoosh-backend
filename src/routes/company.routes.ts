@@ -9,5 +9,6 @@ router.get("/", CompanyController.getAll);
 router.get("/:id", CompanyController.getOne);
 router.put("/:id", uploadCompanyFiles, CompanyController.update);
 router.delete("/:id", CompanyController.remove);
+router.post("/login", CompanyController.Login);
 
 export default router;

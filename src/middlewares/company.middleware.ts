@@ -14,5 +14,5 @@ export const uploadCompanyFiles = multer({ storage }).fields([
   { name: "license_number_image", maxCount: 1 },
   { name: "trademark_logo", maxCount: 1 },
   { name: "trademark_license_image", maxCount: 1 },
-  { name: "newspape_image", maxCount: 1 },
+  { name: "newspaper_image", maxCount: 1 },
 ]);

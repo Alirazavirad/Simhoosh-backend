@@ -4,6 +4,7 @@ import { ConnectToDB } from "./configs/db";
 import greenhouseRoutes from "./routes/greenhouse.routes";
 import companyRoutes from "./routes/company.routes";
 import organizationRoutes from "./routes/Organization.routes";
+import ProvinceRoutes from "./routes/province.routes";
 import cors from 'cors'
 dotenv.config();
 const app: Application = express();
@@ -19,4 +20,5 @@ app.use('/uploads', express.static('uploads'));
 app.use('/greenhouse', greenhouseRoutes);
 app.use('/company', companyRoutes);
 app.use('/organization', organizationRoutes);
+app.use("/province",ProvinceRoutes)
 app.listen(PORT);

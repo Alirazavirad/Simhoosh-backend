@@ -43,9 +43,9 @@ const GreenHouseSchema: Schema = new Schema(
     lat : { type : String, required : true },
     lng : { type : String, required : true },
 
-    build_time: { type: String, required: true },
+    build_time: { type: String,  },
 
-    finish_time: { type: String, required: true },
+    finish_time: { type: String,  },
 
     owner_name: { type: String, required: true },
 
@@ -70,6 +70,7 @@ const GreenHouseSchema: Schema = new Schema(
     license_number_image: { type: String, required: true },
 
     logo: { type: String, required: true },
+
   },
   { timestamps: true }
 );

@@ -1,65 +1,75 @@
 import { Request, Response } from "express";
 import { CompanyService } from "../services/Company.service";
 import { CompanyModel } from "../models/Company.model";
+import { UserModel } from "../models/User.model";
 import crypto from "crypto";
 export const CompanyController = {
-async create(req: Request, res: Response) {
-  try {
-    const files = req.files as any;
-    const token = await crypto.randomBytes(32).toString("hex");
+  async create(req: Request, res: Response) {
+    try {
+      const files = req.files as any;
+      const token = await crypto.randomBytes(32).toString("hex");
 
-    const files_uploaded = {
-      logo: files?.logo?.[0]?.path,
-      license_number_image: files?.license_number_image?.[0]?.path,
-      trademark_logo: files?.trademark_logo?.[0]?.path,
-      trademark_license_image: files?.trademark_license_image?.[0]?.path,
-      newspaper_image: files?.newspaper_image?.[0]?.path,
-    };
+      const files_uploaded = {
+        logo: files?.logo?.[0]?.path,
+        license_number_image: files?.license_number_image?.[0]?.path,
+        trademark_logo: files?.trademark_logo?.[0]?.path,
+        trademark_license_image: files?.trademark_license_image?.[0]?.path,
+        newspaper_image: files?.newspaper_image?.[0]?.path,
+      };
 
-    const { google_map_link, address } = req.body;
+      const { google_map_link, address } = req.body;
 
-    let lat = "";
-    let lng = "";
+      let lat = "";
+      let lng = "";
 
-    const match = google_map_link?.match(/@([-0-9.]+),([-0-9.]+)/);
-    if (match) {
-      lat = match[1];
-      lng = match[2];
-    } else {
+      const match = google_map_link?.match(/@([-0-9.]+),([-0-9.]+)/);
+      if (match) {
+        lat = match[1];
+        lng = match[2];
+      } else {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
             address
           )}`
         );
 
-      
-      const data : any = await response.json()
+        const data: any = await response.json();
 
-      if (data.length > 0) {
-        const best = data.sort(
-          (a: any, b: any) => b.importance - a.importance
-        )[0];
+        if (data.length > 0) {
+          const best = data.sort(
+            (a: any, b: any) => b.importance - a.importance
+          )[0];
 
-        lat = best.lat;
-        lng = best.lon;
+          lat = best.lat;
+          lng = best.lon;
+        }
       }
+
+      if (lat === "" || lng === "") {
+        return res.status(400).json({ message: "نشانی نامعتبر است" });
+      }
+
+      const finalData = { ...req.body, ...files_uploaded, token, lat, lng };
+
+      const { national_id, owner_contact_name, owner_contact_phone } = req.body;
+      await UserModel.findOneAndUpdate(
+        { phone: owner_contact_phone },
+        {
+          $addToSet: { company_ids: national_id },
+          name: owner_contact_name,
+          phone: owner_contact_phone,
+          role: "company_contact",
+        },
+        { upsert: true, new: true }
+      );
+      await CompanyService.create(finalData);
+
+      res.status(201).json({ message: "شرکت ایجاد شد" });
+    } catch (error) {
+      console.error("Create error:", error);
+      res.status(500).json({ error });
     }
-      console.log(lat,lng);
-
-    if (lat === "" || lng === "") {
-      return res.status(400).json({ message: "نشانی نامعتبر است" });
-    }
-
-    const finalData = { ...req.body, ...files_uploaded, token, lat, lng };
-
-    await CompanyService.create(finalData);
-
-    res.status(201).json({ message: "شرکت ایجاد شد" });
-  } catch (error) {
-    console.error("Create error:", error);
-    res.status(500).json({ error });
-  }
-},
+  },
 
   async getAll(req: Request, res: Response) {
     try {
@@ -117,11 +127,16 @@ async create(req: Request, res: Response) {
     try {
       const { national_id, phone } = req.body;
       const token = await crypto.randomBytes(32).toString("hex");
-      const data = await CompanyModel.findOne({ national_id, owner_contact_phone: phone });
+      const data = await CompanyModel.findOne({
+        national_id,
+        owner_contact_phone: phone,
+      });
       if (data) {
         res.status(200).json({ message: "ورود موفقیت امیز", token });
       } else {
-        res.status(404).json({ message: "شماره پروانه یا شماره تلفن گلخانه اشتباه است" });
+        res
+          .status(404)
+          .json({ message: "شماره پروانه یا شماره تلفن گلخانه اشتباه است" });
       }
     } catch (error) {
       console.error("Login error:", error);

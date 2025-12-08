@@ -32,6 +32,8 @@ lat : string;
   company_site: string;
   company_email: string;
   token : string;
+  status : string;
+  isConfirmed : string;
 }
 
 const CompanySchema: Schema = new Schema(
@@ -69,10 +71,12 @@ const CompanySchema: Schema = new Schema(
     trademark_license_image: { type: String, required: true },
     newspaper_image: { type: String, required: true },
 
-    company_tel: { type: String, required: true },
+    company_tel: { type: String,required: true },
     company_phone: { type: String },
     company_site: { type: String, required: true },
     company_email: { type: String, required: true },
+    status: { type: String, default: "غیرفعال" },
+    isConfirmed : { type : Boolean, default : "در انتظار تایید" },
   },
   {
     timestamps: true,

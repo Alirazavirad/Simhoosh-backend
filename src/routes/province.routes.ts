@@ -1,6 +1,9 @@
 import { Router } from "express";
-import { getProvince, getCity } from "../controllers/Province.controller";
 const provinceRouter = Router();
-provinceRouter.get("/getProvince", getProvince);
-provinceRouter.post("/getCity", getCity);
+import { createProvince, getAllProvinces, UpdateProvince,DeleteProvince } from "../controllers/Province.controller";
+
+provinceRouter.post("/", createProvince);
+provinceRouter.get("/", getAllProvinces);
+provinceRouter.put("/:id", UpdateProvince);
+provinceRouter.delete("/:id", DeleteProvince);
 export default provinceRouter;

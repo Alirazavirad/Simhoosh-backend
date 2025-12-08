@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { GreenHouseService } from "../services/GreenHouse.service";
 import { GreenHouseModel } from "../models/GreenHouse.model";
+import { UserModel } from "../models/User.model";
 import crypto from "crypto";
 export const GreenHouseController = {
   async create(req: Request, res: Response) {
@@ -47,6 +48,18 @@ export const GreenHouseController = {
       }
 
       const dataToSave = { ...req.body, ...files_uploaded, token, lat, lng };
+      const { license_number, owner_name, owner_phone } = req.body;
+
+      await UserModel.findOneAndUpdate(
+        { phone: owner_phone },
+        {
+          $addToSet: { greenhouse_ids: license_number },
+          name: owner_name,
+          phone: owner_phone,
+          role: "greenhouse_owner",
+        },
+        { upsert: true, new: true }
+      );
 
       await GreenHouseService.create(dataToSave);
 

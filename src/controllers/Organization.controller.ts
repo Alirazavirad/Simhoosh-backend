@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { OrganizationService } from "../services/Organization.service";
 import { OrganizationModel } from "../models/Organization.model";
+import { UserModel } from "../models/User.model";
 import crypto from "crypto";
 export const OrganizationController = {
   async create(req: Request, res: Response) {
     try {
       const files = req.files as any;
 
-      const token = await crypto.randomBytes(32).toString("hex");
+      const token = await crypto.randomBytes(32).toString("hex")
       const files_uploaded = {
         national_card_img: files?.national_card_img?.[0]?.path,
         personnel_card_img: files?.personnel_card_img?.[0]?.path,
@@ -15,7 +16,18 @@ export const OrganizationController = {
       };
 
       const data = { ...req.body, ...files_uploaded,token };
+       const { national_id, user_name, last_name,phone } = req.body;
 
+       await UserModel.findOneAndUpdate(
+        { national_id: national_id },
+        {
+          name: user_name,
+          last_name: last_name,
+          phone: phone,
+          role: "organization_owner",
+        },
+        { upsert: true, new: true }
+      );
       await OrganizationService.create(data);
 
       res.status(201).json({ message: "سازمان ایجاد شد" });

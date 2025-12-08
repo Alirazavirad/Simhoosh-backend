@@ -6,7 +6,7 @@ export const CompanyService = {
   },
 
   async getAll() {
-    return await CompanyModel.find().sort({ createdAt: -1 });
+    return await CompanyModel.find().sort({ createdAt: -1 })
   },
 
   async getOne(id: string) {

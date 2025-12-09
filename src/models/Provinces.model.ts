@@ -12,7 +12,8 @@ const ProvinceSchema: Schema = new Schema(
     title: { type: String, required: true },
     cities: [
       {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "city",
       },
     ],
     status: { type: String, required: true },

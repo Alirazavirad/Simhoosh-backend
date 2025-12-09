@@ -61,7 +61,7 @@ export const createProvince = async (req: Request, res: Response) => {
 
 export const getAllProvinces = async (req: Request, res: Response) => {
   try {
-    const provinces = await ProvinceModel.find({});
+    const provinces = await ProvinceModel.find({}).populate("cities");
     res.status(200).json(provinces);
   } catch (error) {
     console.log(error);

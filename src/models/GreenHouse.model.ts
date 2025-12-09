@@ -24,6 +24,7 @@ export interface IGreenHouse extends Document {
   lat : string;
   lng : string;
   token: string;
+  AdminStatus : string;
 }
 
 const GreenHouseSchema: Schema = new Schema(
@@ -70,6 +71,7 @@ const GreenHouseSchema: Schema = new Schema(
     license_number_image: { type: String, required: true },
 
     logo: { type: String, required: true },
+    AdminStatus : { type : String, default : "در انتظار تایید" },
 
   },
   { timestamps: true }

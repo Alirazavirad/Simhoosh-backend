@@ -76,7 +76,7 @@ const CompanySchema: Schema = new Schema(
     company_site: { type: String, required: true },
     company_email: { type: String, required: true },
     status: { type: String, default: "غیرفعال" },
-    isConfirmed : { type : Boolean, default : "در انتظار تایید" },
+    isConfirmed : { type : String, default : "در انتظار تایید" },
   },
   {
     timestamps: true,

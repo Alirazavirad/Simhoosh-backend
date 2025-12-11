@@ -98,6 +98,7 @@ export const GreenHouseController = {
         license_number_image: files?.license_number_image?.[0]?.path,
         logo: files?.logo?.[0]?.path,
       };
+      
 
       const result = await GreenHouseService.update(req.params.id, data);
       res.json(result);

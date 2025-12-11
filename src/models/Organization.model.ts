@@ -16,6 +16,7 @@ export interface IOrganization extends Document {
   national_card_img: string;
   personnel_card_img: string;
   introduction_img: string;
+  status: string;
 }
 
 const OrganizationSchema: Schema = new Schema({
@@ -34,6 +35,7 @@ const OrganizationSchema: Schema = new Schema({
   national_card_img: { type: String, required: true },
   personnel_card_img: { type: String, required: true }, 
   introduction_img: { type: String, required: true },
+  status: { type: String, default : "در انتظار تایید" },
 }
   ,
   { timestamps: true }

@@ -7,6 +7,8 @@ import organizationRoutes from "./routes/Organization.routes";
 import ProvinceRoutes from "./routes/province.routes";
 import UserRoutes from "./routes/user.routes";
 import CityRoutes from "./routes/city.routes";
+import automationRoutes from "./routes/automation.routes";
+import AboutUsRoutes from "./routes/aboutUs.routes";
 import cors from 'cors'
 dotenv.config();
 const app: Application = express()
@@ -25,4 +27,6 @@ app.use('/organization', organizationRoutes);
 app.use("/province",ProvinceRoutes)
 app.use("/user",UserRoutes)
 app.use("/city",CityRoutes)
+app.use("/automation",automationRoutes)
+app.use("/aboutUs",AboutUsRoutes)
 app.listen(PORT);

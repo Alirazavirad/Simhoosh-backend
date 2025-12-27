@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/", createFilters); 
 router.get("/", getFilters);
-router.put("/:id", updateFilters);
+router.put("/", updateFilters);
 router.delete("/:id", deleteFilters);   
 
 export default router;

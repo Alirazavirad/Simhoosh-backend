@@ -5,8 +5,8 @@ const createFilters = async (req: Request, res: Response) => {
     const filters = await FiltersModel.create(req.body);
     res.status(200).json(filters);
   } catch (error) {
-    console.log({error});
-    
+    console.log({ error });
+
     res.status(500).json({ message: "خطا در ایجاد فیلتر" });
   }
 };
@@ -22,31 +22,33 @@ const getFilters = async (req: Request, res: Response) => {
 
 const updateFilters = async (req: Request, res: Response) => {
   try {
-    const { value, title } = req.body;
+    const { filters } = req.body;
 
-    const filters = await FiltersModel.findById(req.params.id);
-
-    if (!filters) {
-      return res.status(404).json({ message: "فیلتر مورد نظر پیدا نشد" });
+    if (!Array.isArray(filters)) {
+      return res.status(400).json({ message: "داده‌ها باید آرایه باشند" });
     }
 
-    if (typeof title === "string") {
-      filters.title = title;
-    }
-    // if (filters.value.length > 1) {
-    //   filters.value = value;
-    // } else {
-    //   filters.value = [value];
-    // }
+    const updatedFilters = await Promise.all(
+      filters.map(
+        async (f: { _id: string; isActive?: boolean; title?: string }) => {
+          const filter = await FiltersModel.findById(f._id);
+          if (!filter) return null;
 
-    await filters.save();
+          if (typeof f.isActive === "boolean") filter.isActive = f.isActive;
+          if (typeof f.title === "string") filter.title = f.title;
 
-    return res.status(200).json(filters);
+          await filter.save();
+          return filter;
+        }
+      )
+    );
+
+    const filteredResult = updatedFilters.filter((f) => f !== null);
+
+    res.status(200).json(filteredResult);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-      message: "خطا در بروزرسانی فیلتر",
-    });
+    res.status(500).json({ message: "خطا در بروزرسانی فیلترها" });
   }
 };
 const deleteFilters = async (req: Request, res: Response) => {

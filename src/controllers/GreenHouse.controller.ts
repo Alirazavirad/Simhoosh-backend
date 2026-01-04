@@ -24,24 +24,27 @@ export const GreenHouseController = {
       if (match) {
         lat = match[1];
         lng = match[2];
-      } else {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-            address
-          )}`
-        );
-
-        const data: any = await response.json();
-
-        if (data.length > 0) {
-          const best = data.sort(
-            (a: any, b: any) => b.importance - a.importance
-          )[0];
-
-          lat = best.lat;
-          lng = best.lon;
-        }
       }
+      // } else {
+      //   const response = await fetch(
+      //     `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      //       address
+      //     )}`
+          
+      //   );
+        
+      //   const data: any = await response.json();
+      //   console.log(data);
+
+      //   if (data.length > 0) {
+      //     const best = data.sort(
+      //       (a: any, b: any) => b.importance - a.importance
+      //     )[0];
+
+      //     lat = best.lat;
+      //     lng = best.lon;
+      //   }
+      // }
 
       if (!lat || !lng) {
         return res.status(404).json({ message: "نشانی نامعتبر" });
